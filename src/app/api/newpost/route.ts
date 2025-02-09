@@ -9,8 +9,11 @@ export async function POST(req: Request) {
   const formData = await req.formData();
   const userId = formData.get("userId") as string;
   const title = formData.get("title") as string;
+  const tagString = formData.get("tags") as string;
   const file = formData.get("file") as File;
   const description = formData.get("description") as string;
+
+  const tags = tagString.split("#").filter((tag) => tag.length > 0);
 
   if (title.length < 4) {
     return Response.json(
@@ -48,6 +51,7 @@ export async function POST(req: Request) {
     title,
     description,
     commentCount: 0,
+    tags,
     imgSrcs: imgSrc ? [imgSrc] : null,
     vidSrc: vidSrc ? [vidSrc] : null,
     contentFileType,

@@ -35,7 +35,7 @@ export function ImageOrVideo() {
       type="file"
       name="file"
       accept="image/*, video/*"
-      className="p-2 file:bg-violet-700 file:text-sm file:py-1 file:px-2 file:text-white file:mr-2 file:border-0 file:rounded-md transition-colors w-full rounded-xl hover:bg-zinc-800"
+      className="p-2 ring-1 ring-violet-950 file:bg-violet-700 file:text-sm file:py-1 file:px-2 file:text-white rounded-xl file:mr-2 file:border-0 file:rounded-md transition-colors w-full hover:bg-violet-950"
     />
   );
 }

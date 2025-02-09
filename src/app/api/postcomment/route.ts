@@ -18,6 +18,7 @@ export async function POST(request: Request) {
   const parsed = commentSchema.safeParse(data);
 
   if (!parsed.success) {
+    console.log(data);
     return new Response(parsed.error.message, { status: 400 });
   }
 

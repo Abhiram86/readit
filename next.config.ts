@@ -14,20 +14,6 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "10mb",
     },
   },
-  //TODO: Remove this after testing
-  async headers() {
-    return [
-      {
-        source: "/api/:path*",
-        headers: [
-          {
-            key: "Access-Control-Allow-Origin",
-            value: "https://bfrsst56-3000.inc1.devtunnels.ms",
-          },
-        ],
-      },
-    ];
-  },
 };
 
 export default nextConfig;

@@ -10,12 +10,14 @@ export default function Logout({
 }) {
   const { logout } = useUserStore();
   return (
-    <li
-      onClick={() => (logout(), setIsOpen(false))}
-      className="flex cursor-pointer transition-colors rounded hover:bg-zinc-700 gap-2 p-2 items-center"
-    >
-      <FiLogOut className="h-6 w-6" />
-      <p>logout</p>
-    </li>
+    <div className="pt-1 border-t border-zinc-600">
+      <li
+        onClick={() => (logout(), setIsOpen(false))}
+        className="flex cursor-pointer transition-colors rounded-lg hover:ring-1 ring-red-800 text-red-400 hover:bg-red-950 gap-2 p-2 items-center"
+      >
+        <FiLogOut className="h-6 w-6" />
+        <p>logout</p>
+      </li>
+    </div>
   );
 }

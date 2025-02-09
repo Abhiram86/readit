@@ -1,5 +1,11 @@
+"use client";
+
 import { SetStateAction } from "react";
 import Logout from "./Logout";
+// import Link from "next/link";
+import ModalContainer, { ModalItem } from "./ModalContainer";
+import { FaUser } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 export default function ProfileModal({
   isOpen,
@@ -8,31 +14,25 @@ export default function ProfileModal({
   isOpen: boolean;
   setIsOpen: React.Dispatch<SetStateAction<boolean>>;
 }) {
+  const router = useRouter();
   return (
-    <div
-      className={`absolute font-sans ${
-        isOpen ? "top-[3.75rem]" : "top-0 opacity-0 pointer-events-none"
-      } right-0 transition-all duration-300 bg-zinc-800 rounded-md z-40`}
+    <ModalContainer
+      className={`${
+        isOpen ? "top-[3.75rem] right-1" : "top-0 opacity-0 pointer-events-none"
+      } right-0`}
     >
       <ul className="flex flex-col p-2 space-y-1 w-52">
-        <li className="flex cursor-pointer transition-colors rounded hover:bg-zinc-700 gap-2 p-2 items-center">
-          <div className="h-8 w-8 rounded-full bg-zinc-500" />
+        <ModalItem
+          // href={"/profile?q=general"}
+          onClick={() => (router.push("/profile?q=general"), setIsOpen(false))}
+          className="flex cursor-pointer transition-all rounded-lg hover:ring-1 ring-zinc-600 hover:bg-zinc-700 gap-2 p-2 items-center"
+        >
+          {/* <div className="h-8 w-8 rounded-full bg-zinc-500" /> */}
+          <FaUser className="h-6 w-6 pr-1 text-zinc-300 " />
           <p>view profile</p>
-        </li>
-        <li className="flex cursor-pointer transition-colors rounded hover:bg-zinc-700 gap-2 p-2 items-center">
-          <div className="h-8 w-8 rounded-full bg-zinc-500" />
-          <p>Username</p>
-        </li>
-        <li className="flex cursor-pointer transition-colors rounded hover:bg-zinc-700 gap-2 p-2 items-center">
-          <div className="h-8 w-8 rounded-full bg-zinc-500" />
-          <p>Username</p>
-        </li>
-        <li className="flex cursor-pointer transition-colors rounded hover:bg-zinc-700 gap-2 p-2 items-center">
-          <div className="h-8 w-8 rounded-full bg-zinc-500" />
-          <p>Username</p>
-        </li>
+        </ModalItem>
         <Logout setIsOpen={setIsOpen} />
       </ul>
-    </div>
+    </ModalContainer>
   );
 }

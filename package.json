@@ -19,6 +19,7 @@
     "@types/fluent-ffmpeg": "^2.1.27",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.38.4",
     "fluent-ffmpeg": "^2.1.3",

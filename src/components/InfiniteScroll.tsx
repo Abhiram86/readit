@@ -7,10 +7,16 @@ import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import ImageProblemPost from "./ImageProblemPost";
 
-export default function InfiniteScroll({ lastId }: { lastId: number }) {
+export default function InfiniteScroll({
+  lastId,
+  searchParam,
+}: {
+  lastId: number;
+  searchParam?: string;
+}) {
   const { data, error, fetchNextPage, isFetchingNextPage } = useInfiniteQuery({
-    queryKey: ["infinte"],
-    queryFn: getPosts,
+    queryKey: ["infinte", searchParam],
+    queryFn: ({ pageParam }) => getPosts({ pageParam, searchParam }),
     initialPageParam: lastId,
     getNextPageParam: (lastPage) => {
       if (!lastPage || lastPage.length === 0) return undefined;

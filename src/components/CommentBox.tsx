@@ -3,6 +3,7 @@
 import { useUserStore } from "@/store/user";
 import axios from "axios";
 import { useRef } from "react";
+import toast from "react-hot-toast";
 
 export default function CommentBox({
   id,
@@ -16,10 +17,14 @@ export default function CommentBox({
   const { user } = useUserStore();
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const handlePostComment = async () => {
+    if (!user) {
+      toast.error("You must be logged in to comment");
+      return;
+    }
     const res = await axios.post("/api/postcomment", {
       comment: inputRef.current?.value,
       problemPostId: id,
-      userId: user?.id,
+      userId: user.id,
       level: level,
       parentCommentId: parentId || undefined,
     });

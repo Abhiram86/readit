@@ -1,16 +1,20 @@
 import Image from "next/image";
 import Stats from "./Stats";
-import { IoEllipsisVertical } from "react-icons/io5";
+import PostWrapper from "./PostWrapper";
+import PostModal from "./PostModal";
+import { formatDistanceToNow } from "date-fns";
 
-type ImageProblemProps = {
+export type ImageProblemProps = {
   data: {
     id: number;
-    postedBy: number;
+    userId: number;
+    postedBy: string | null;
     title: string;
     imgSrc: string[] | null;
     contentFileType: string | null;
     vidSrc: string[] | null;
     description: string | null;
+    createdAt: Date;
     stats: {
       upvotes: number;
       downvotes: number;
@@ -21,13 +25,16 @@ type ImageProblemProps = {
 
 export default function ImageProblemPost({ data }: ImageProblemProps) {
   return (
-    <div className="font-san p-2 transition-all rounded-lg">
-      <div className="flex justify-between bosrder items-center">
-        <div className="flex gap-1 font-bold text-zinc-400">
+    <PostWrapper id={data.id}>
+      <div className="flex justify-between items-center">
+        <div className="flex gap-2 font-bold items-center text-zinc-400">
           <div className="h-6 w-6 rounded-full bg-zinc-500" />
           <h1>{data.postedBy}</h1>
+          <p className="text-zinc-500 text-xs font-medium">
+            {formatDistanceToNow(data.createdAt)} ago
+          </p>
         </div>
-        <IoEllipsisVertical className="text-zinc-400 cursor-pointer transition-colors h-6 w-6 p-1 rounded-full hover:bg-zinc-700" />
+        <PostModal id={data.id} />
       </div>
       <h1 className="font-medium">{data.title}</h1>
       {data.imgSrc && data.imgSrc.length > 0 && (
@@ -52,6 +59,6 @@ export default function ImageProblemPost({ data }: ImageProblemProps) {
         comments={data.stats.comments}
         onCommentsClikcHref={`/problem/${data.id}`}
       />
-    </div>
+    </PostWrapper>
   );
 }

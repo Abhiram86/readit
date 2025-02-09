@@ -24,6 +24,7 @@ export default function CreatePost() {
       <PostForm onSubmit={handleSubmit}>
         <Input name="title" placeholder="Title" />
         <ImageOrVideo />
+        <Input name="tags" placeholder="Tags ex: #tag1, #tag2" />
         <TextArea placeholder="Description" />
       </PostForm>
     </div>

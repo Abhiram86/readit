@@ -11,8 +11,10 @@ export default function Sidebar() {
   return (
     <aside
       className={`${
-        isOpen ? "w-64 p-2 border-r" : "w-0 md:w-64 md:border-r md:p-2 p-0"
-      } h-[calc(100dvh-62px)] bg-black/85 backdrop-blur-sm transition-all duration-300 overflow-hidden sticky top-[58px] border-zinc-600 z-50`}
+        isOpen
+          ? "w-64 p-4 border-r"
+          : "w-0 md:w-64 opacity-0 pointer-events-none"
+      } h-[calc(100dvh-60px)] fixed md:sticky bg-black/85 backdrop-blur-sm transition-all duration-300 overflow-hidden top-[58px] border-zinc-600 z-50`}
     >
       <ul className="space-y-1">
         {navLinks.map((link) => (
@@ -20,7 +22,7 @@ export default function Sidebar() {
             href={link.path}
             key={link.name}
             onClick={toggle}
-            className={`flex px-4 py-2 w-full transition-all cursor-pointer rounded gap-2 ${
+            className={`flex px-4 py-2 w-full transition-all cursor-pointer rounded-lg gap-2 ${
               link.path === pathname ? "bg-violet-700" : "hover:bg-zinc-700"
             }`}
           >
