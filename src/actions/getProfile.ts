@@ -5,6 +5,7 @@ import db from "@/db/drizzle";
 import {
   comments,
   commentVotes,
+  followers,
   postVotes,
   problemPost,
   savedPosts,
@@ -40,11 +41,13 @@ export async function getMyPosts(id: number) {
     .select({
       id: problemPost.id,
       title: problemPost.title,
-      postedBy: problemPost.userId,
+      userId: problemPost.userId,
+      postedBy: users.username,
       imgSrc: problemPost.imgSrcs,
       vidSrc: problemPost.vidSrc,
       contentFileType: problemPost.contentFileType,
       description: problemPost.description,
+      createdAt: problemPost.createdAt,
       stats: {
         upvotes:
           sql<number>`COUNT(CASE WHEN ${postVotes.voteType} = TRUE THEN 1 END)`.as(
@@ -59,9 +62,10 @@ export async function getMyPosts(id: number) {
     })
     .from(problemPost)
     .leftJoin(postVotes, eq(problemPost.id, postVotes.problemPostId))
+    .leftJoin(users, eq(problemPost.userId, users.id))
     .where(eq(problemPost.userId, id))
     .orderBy(desc(problemPost.id))
-    .groupBy(problemPost.id, problemPost.commentCount);
+    .groupBy(problemPost.id, users.id);
 
   const posts = await getPostsWithSingedUrl(myPosts);
 
@@ -93,16 +97,48 @@ async function generateSignedUrl(bucket: string, key: string) {
   return signedUrl;
 }
 
+export async function getMyFollowing(id: number) {
+  const following = await db
+    .select({
+      id: followers.id,
+      followerId: followers.followerId,
+      username: users.username,
+    })
+    .from(followers)
+    .leftJoin(users, eq(followers.followerId, users.id))
+    .where(eq(followers.userId, id))
+    .groupBy(followers.followerId, users.id, followers.id);
+
+  return following;
+}
+
+export async function getMyFollowers(id: number) {
+  const myFollowers = await db
+    .select({
+      id: followers.id,
+      followerId: followers.userId,
+      username: users.username,
+    })
+    .from(followers)
+    .leftJoin(users, eq(followers.userId, users.id))
+    .where(eq(followers.followerId, id))
+    .groupBy(followers.userId, users.id, followers.id);
+
+  return myFollowers;
+}
+
 export async function getMyVotedPosts(id: number, voteType: boolean) {
   const upvotedPosts = await db
     .select({
       id: problemPost.id,
       title: problemPost.title,
-      postedBy: problemPost.userId,
+      userId: problemPost.userId,
+      postedBy: users.username,
       imgSrc: problemPost.imgSrcs,
       vidSrc: problemPost.vidSrc,
       contentFileType: problemPost.contentFileType,
       description: problemPost.description,
+      createdAt: problemPost.createdAt,
       stats: {
         upvotes:
           sql<number>`COUNT(CASE WHEN ${postVotes.voteType} = TRUE THEN 1 END)`.as(
@@ -117,9 +153,10 @@ export async function getMyVotedPosts(id: number, voteType: boolean) {
     })
     .from(problemPost)
     .leftJoin(postVotes, eq(problemPost.id, postVotes.problemPostId))
+    .leftJoin(users, eq(problemPost.userId, users.id))
     .where(and(eq(postVotes.userId, id), eq(postVotes.voteType, voteType)))
-    .groupBy(problemPost.id);
-
+    // .orderBy(desc(postVotes.createdAt))
+    .groupBy(problemPost.id, users.id);
   const posts = getPostsWithSingedUrl(upvotedPosts);
 
   return posts;
@@ -131,11 +168,13 @@ export async function getMyComments(id: number) {
       id: comments.id,
       problemPostId: comments.problemPostId,
       content: comments.content,
-      postedBy: comments.userId,
+      userId: comments.userId,
+      postedBy: users.username,
       time: comments.createdAt,
       text: comments.content,
       parentId: comments.parentCommentId,
       level: comments.level,
+      createdAt: comments.createdAt,
       upvotes:
         sql<number>`COUNT(CASE WHEN ${commentVotes.voteType} = TRUE THEN 1 END)`.as(
           "upvotes"
@@ -148,8 +187,9 @@ export async function getMyComments(id: number) {
     })
     .from(comments)
     .leftJoin(commentVotes, eq(comments.id, commentVotes.commentId))
+    .leftJoin(users, eq(comments.userId, users.id))
     .where(eq(comments.userId, id))
-    .groupBy(comments.id, comments.commentCount)
+    .groupBy(comments.id, users.id)
     .orderBy(desc(comments.createdAt));
   return myComments;
 }
@@ -159,11 +199,13 @@ export const getMySavedPosts = cache(async (id: number) => {
     .select({
       id: problemPost.id,
       title: problemPost.title,
-      postedBy: problemPost.userId,
+      userId: problemPost.userId,
+      postedBy: users.username,
       imgSrc: problemPost.imgSrcs,
       vidSrc: problemPost.vidSrc,
       contentFileType: problemPost.contentFileType,
       description: problemPost.description,
+      createdAt: problemPost.createdAt,
       stats: {
         upvotes:
           sql<number>`COUNT(CASE WHEN ${postVotes.voteType} = TRUE THEN 1 END)`.as(
@@ -179,8 +221,9 @@ export const getMySavedPosts = cache(async (id: number) => {
     .from(problemPost)
     .leftJoin(savedPosts, eq(savedPosts.problemPostId, problemPost.id))
     .leftJoin(postVotes, eq(postVotes.problemPostId, problemPost.id))
+    .leftJoin(users, eq(savedPosts.userId, users.id))
     .where(eq(savedPosts.userId, id))
-    .groupBy(problemPost.id);
+    .groupBy(problemPost.id, users.id);
 
   const posts = getPostsWithSingedUrl(mySavedPosts);
 

@@ -1,10 +1,12 @@
+import { formatDistanceToNow } from "date-fns";
 import CommentExtender from "./CommentExtender";
 import CommentStats from "./CommentStats";
 
 export type CommentProps = {
   data: {
     id: number;
-    postedBy: number;
+    userId: number;
+    postedBy: string | null;
     text: string;
     upvotes: number;
     downvotes: number;
@@ -24,13 +26,13 @@ export default function Comment({
 }: CommentProps) {
   return (
     <div className={`mt-2 pt-2 relative ${className}`}>
-      <div className="relative flex gap-4 font-bold items-center z-10 text-zinc-400">
-        <div className="flex gap-1 items-center">
+      <div className="relative flex gap-2 font-bold items-center z-10 text-zinc-400">
+        <div className="flex gap-2 items-center">
           <div className="h-5 w-5 z-20 rounded-full bg-zinc-500" />
           <h1>{data.postedBy}</h1>
         </div>
-        <p className="text-zinc-500 text-xs font-normal">
-          {new Date(data.time).toLocaleString()}
+        <p className="text-zinc-500 text-xs font-medium">
+          {formatDistanceToNow(data.time)} ago
         </p>
       </div>
       <div className="pl-6 text-sm">

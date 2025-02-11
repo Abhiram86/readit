@@ -61,31 +61,6 @@ export default function Stats({
       }
     }
   };
-  // const handleSavePost = async () => {
-  //   if (!user) {
-  //     toast.error("You must be logged in to save post", {
-  //       style: {
-  //         background: "#333",
-  //         color: "#fff",
-  //         border: "1px solid #52525b",
-  //       },
-  //     });
-  //     return;
-  //   }
-  //   const res = await axios.post("/api/postSave", {
-  //     userId: user.id,
-  //     problemPostId: postId,
-  //   });
-  //   if (res.status === 200) {
-  //     toast.success("Post saved", {
-  //       style: {
-  //         background: "#333",
-  //         color: "#fff",
-  //         border: "1px solid #52525b",
-  //       },
-  //     });
-  //   }
-  // };
   return (
     <div className="flex w-full pt-2 gap-2">
       <div
@@ -115,20 +90,14 @@ export default function Stats({
           <IoChatbubble className="h-4 w-4 text-zinc-400" />
           <p>{comments}</p>
         </div>
-        {/* <div
-          className="flex ring-1 ring-zinc-700 transition-colors items-center gap-1 cursor-pointer hover:bg-zinc-700 py-2 px-3 rounded-3xl bg-zinc-800"
-          onClick={(e) => (e.stopPropagation(), handleSavePost)}
-        >
-          <IoMdBookmark className="h-5 w-5 text-zinc-400" />
-        </div> */}
-        {/* <div
-          onClick={(e) => e.stopPropagation()}
-          className="flex ring-1 ring-red-900 transition-colors items-center gap-1 cursor-pointer hover:bg-red-900 py-2 px-3 rounded-3xl bg-red-950"
-        >
-          <MdDelete className="h-5 w-5 text-red-400" />
-        </div> */}
         <div
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => (
+            e.stopPropagation(),
+            navigator.clipboard.writeText(
+              "http://localhost:3000/post/" + postId
+            ),
+            toast.success("Link copied to clipboard")
+          )}
           className="flex ring-1 ring-zinc-700 transition-colors items-center gap-1 cursor-pointer hover:bg-zinc-700 py-2 px-3 rounded-3xl bg-zinc-800"
         >
           <FaShare className="h-5 w-5 text-zinc-400" />

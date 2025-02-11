@@ -10,7 +10,7 @@ export default function ClientWrapper({
   const queryClient = new QueryClient();
   return (
     <QueryClientProvider client={queryClient}>
-      <main className="flex-1 pb-4">{children}</main>
+      <main className="flex-1 rounded-xl pb-4">{children}</main>
       <Toaster />
     </QueryClientProvider>
   );

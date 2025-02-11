@@ -21,7 +21,7 @@ export default function ProfileModal({
         isOpen ? "top-[3.75rem] right-1" : "top-0 opacity-0 pointer-events-none"
       } right-0`}
     >
-      <ul className="flex flex-col p-2 space-y-1 w-52">
+      <ul className="flex flex-col p-1 space-y-1 w-52">
         <ModalItem
           // href={"/profile?q=general"}
           onClick={() => (router.push("/profile?q=general"), setIsOpen(false))}

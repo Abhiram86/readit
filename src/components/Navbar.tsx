@@ -42,8 +42,8 @@ export default function Navbar({ userData }: { userData: UserData | null }) {
             className="h-5 w-5 absolute top-3 cursor-pointer right-3"
             onClick={() =>
               searchQuery.length > 0
-                ? router.push(`?q=${searchQuery}`)
-                : router.push(`/`)
+                ? router.replace(`?q=${searchQuery}`)
+                : router.replace(`/`)
             }
           />
         </div>

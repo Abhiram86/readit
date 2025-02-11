@@ -11,7 +11,7 @@ export default async function MainComponent({
   const token = (await cookies()).get("token")?.value;
   const userData = token ? await verifyToken(token) : null;
   return (
-    <main>
+    <main className="bg-black xl:border-l xl:border-r border-zinc-700">
       <Navbar userData={userData} />
       {children}
     </main>

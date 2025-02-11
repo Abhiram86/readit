@@ -3,6 +3,7 @@ import Stats from "./Stats";
 import PostWrapper from "./PostWrapper";
 import PostModal from "./PostModal";
 import { formatDistanceToNow } from "date-fns";
+import ImageWrapper from "./ImageWrapper";
 
 export type ImageProblemProps = {
   data: {
@@ -29,16 +30,22 @@ export default function ImageProblemPost({ data }: ImageProblemProps) {
       <div className="flex justify-between items-center">
         <div className="flex gap-2 font-bold items-center text-zinc-400">
           <div className="h-6 w-6 rounded-full bg-zinc-500" />
-          <h1>{data.postedBy}</h1>
+          <h1 className="hover:underline cursor-pointer">{data.postedBy}</h1>
           <p className="text-zinc-500 text-xs font-medium">
             {formatDistanceToNow(data.createdAt)} ago
           </p>
+          {/* <button
+            type="button"
+            className="text-sm font-medium px-3 rounded-3xl bg-zinc-300 text-zinc-900 ring-1 ring-zinc-500 hover:bg-zinc-600"
+          >
+            follow
+          </button> */}
         </div>
-        <PostModal id={data.id} />
+        <PostModal postId={data.id} userId={data.userId} />
       </div>
       <h1 className="font-medium">{data.title}</h1>
       {data.imgSrc && data.imgSrc.length > 0 && (
-        <div className="w-full bg-zinc-900 my-2 relative rounded-lg border overflow-hidden border-zinc-700">
+        <ImageWrapper imgSrc={data.imgSrc[0]}>
           <Image
             priority
             src={data.imgSrc[0]}
@@ -47,7 +54,7 @@ export default function ImageProblemPost({ data }: ImageProblemProps) {
             height={500}
             alt="image"
           />
-        </div>
+        </ImageWrapper>
       )}
       <div className="text-zinc-400 text-sm">
         <p>{data.description}</p>

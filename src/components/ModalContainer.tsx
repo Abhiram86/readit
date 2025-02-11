@@ -27,7 +27,7 @@ export function ModalItem({
   return (
     <li
       onClick={onClick}
-      className={`flex cursor-pointer transition-all rounded-lg hover:ring-1 ring-zinc-600 hover:bg-zinc-700 gap-2 items-center ${className}`}
+      className={`flex cursor-pointer transition-all rounded-md hover:ring-1 ring-zinc-600 hover:bg-zinc-700 gap-2 items-center ${className}`}
     >
       {children}
     </li>

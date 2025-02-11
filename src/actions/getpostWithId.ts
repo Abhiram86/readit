@@ -1,5 +1,11 @@
 import db from "@/db/drizzle";
-import { comments, commentVotes, postVotes, problemPost } from "@/db/schema";
+import {
+  comments,
+  commentVotes,
+  postVotes,
+  problemPost,
+  users,
+} from "@/db/schema";
 import { and, desc, eq, sql } from "drizzle-orm";
 import s3Client from "@/storage/bucket";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
@@ -10,11 +16,13 @@ export async function getPost(id: number) {
     .select({
       id: problemPost.id,
       title: problemPost.title,
-      postedBy: problemPost.userId,
+      userId: problemPost.userId,
+      postedBy: users.username,
       imgSrc: problemPost.imgSrcs,
       vidSrc: problemPost.vidSrc,
       contentFileType: problemPost.contentFileType,
       description: problemPost.description,
+      createdAt: problemPost.createdAt,
       stats: {
         upvotes:
           sql<number>`COUNT(CASE WHEN ${postVotes.voteType} = TRUE THEN 1 END)`.as(
@@ -29,8 +37,9 @@ export async function getPost(id: number) {
     })
     .from(problemPost)
     .leftJoin(postVotes, eq(problemPost.id, postVotes.problemPostId))
+    .leftJoin(users, eq(problemPost.userId, users.id))
     .where(eq(problemPost.id, id))
-    .groupBy(problemPost.id, problemPost.commentCount);
+    .groupBy(problemPost.id, problemPost.commentCount, users.id);
 
   if (res[0].imgSrc) {
     const signedUrl = await generateSignedUrl(
@@ -58,11 +67,13 @@ export async function getComments(id: number) {
     .select({
       id: comments.id,
       content: comments.content,
-      postedBy: comments.userId,
+      userId: comments.userId,
+      postedBy: users.username,
       time: comments.createdAt,
       text: comments.content,
       parentId: comments.parentCommentId,
       level: comments.level,
+      createdAt: comments.createdAt,
       upvotes:
         sql<number>`COUNT(CASE WHEN ${commentVotes.voteType} = TRUE THEN 1 END)`.as(
           "upvotes"
@@ -75,8 +86,9 @@ export async function getComments(id: number) {
     })
     .from(comments)
     .leftJoin(commentVotes, eq(comments.id, commentVotes.commentId))
+    .leftJoin(users, eq(comments.userId, users.id))
     .where(and(eq(comments.problemPostId, id), eq(comments.level, 1)))
-    .groupBy(comments.id, comments.commentCount)
+    .groupBy(comments.id, comments.commentCount, users.id)
     .orderBy(desc(comments.createdAt));
   return res;
 }
