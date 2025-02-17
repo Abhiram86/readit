@@ -12,9 +12,11 @@ export const getPosts = cache(
   async ({
     pageParam,
     searchParam,
+    userId,
   }: {
     pageParam?: number;
     searchParam?: string;
+    userId: number | null;
   }) => {
     console.log("searchParam is:", searchParam);
     const res = await db
@@ -28,6 +30,20 @@ export const getPosts = cache(
         contentFileType: problemPost.contentFileType,
         description: problemPost.description,
         createdAt: problemPost.createdAt,
+        isSaved:
+          sql<boolean>`EXISTS (SELECT 1 FROM saved_posts WHERE problem_post_id = ${problemPost.id} AND user_id = ${userId})`.as(
+            "isSaved"
+          ),
+        isVoted: userId
+          ? sql<boolean | null>`
+              (SELECT ${postVotes.voteType} 
+       FROM ${postVotes} 
+       WHERE ${postVotes.problemPostId} = ${problemPost.id} 
+       AND ${postVotes.userId} = ${userId} 
+       LIMIT 1)
+
+            `.as("isVoted")
+          : sql<boolean | null>`NULL`.as("isVoted"),
         stats: {
           upvotes:
             sql<number>`COUNT(CASE WHEN ${postVotes.voteType} = TRUE THEN 1 END)`.as(
@@ -51,7 +67,12 @@ export const getPosts = cache(
       )
       .leftJoin(postVotes, eq(problemPost.id, postVotes.problemPostId))
       .leftJoin(users, eq(problemPost.userId, users.id))
-      .groupBy(problemPost.id, problemPost.commentCount, users.username)
+      .groupBy(
+        problemPost.id,
+        problemPost.commentCount,
+        users.username,
+        postVotes.voteType
+      )
       .orderBy(problemPost.id)
       .limit(2);
 
@@ -86,6 +107,8 @@ export const getPosts = cache(
         };
       })
     );
+
+    console.log(res);
 
     return postsWithFiles;
   }

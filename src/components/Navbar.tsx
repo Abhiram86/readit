@@ -13,7 +13,6 @@ export default function Navbar({ userData }: { userData: UserData | null }) {
   const { user, login } = useUserStore();
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-  // const searchQueryRef = useRef<HTMLInputElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
   useEffect(() => {
     if (userData) {
@@ -30,7 +29,7 @@ export default function Navbar({ userData }: { userData: UserData | null }) {
         <div className="flex gap-2 items-center">
           <div className="w-9 h-9 bg-gradient-to-br from-violet-700 to-purple-900 rounded-full mr-1" />
         </div>
-        <div className="relative flex-1">
+        <div className="peer relative flex-1">
           <input
             type="text"
             value={searchQuery}
@@ -47,15 +46,14 @@ export default function Navbar({ userData }: { userData: UserData | null }) {
             }
           />
         </div>
-        <div className="flex gap-2 items-center">
+        <div className="peer-focus:w-1/4 flex gap-2 items-center">
           {user ? (
             <>
               <Link
-                href="/newproblem"
-                className="flex gap-2 truncatse pl-2 pr-4 py-2 cursor-pointer transition-colors hover:bg-zinc-700 rounded-3xl items-center"
+                href="/new/problem"
+                className="truncatse p-[6px] cursor-pointer transition-colors hover:bg-zinc-700 rounded-3xl items-center"
               >
                 <BiPlus className="h-6 w-6" />
-                new hunt
               </Link>
               <div
                 className="w-9 h-9 border cursor-pointer transition-all hover:border-2 border-violet-500 rounded-full"

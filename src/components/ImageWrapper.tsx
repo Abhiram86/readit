@@ -14,7 +14,7 @@ export default function ImageWrapper({
   return (
     <div
       onClick={(e) => (e.stopPropagation(), setIsOpen(!isOpen))}
-      className="w-full bg-zinc-900 my-2 relative rounded-lg border border-zinc-700"
+      className="w-full bg-zinc-900 my-1 overflow-hidden relative rounded-xl border border-zinc-700"
     >
       {children}
       {/* {isOpen && <ImagePopOpen imgSrc={imgSrc} />} */}

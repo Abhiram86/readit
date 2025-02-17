@@ -1,8 +1,10 @@
 export default function PostForm({
   children,
+  submitText = "create new post",
   onSubmit,
 }: {
   children: React.ReactNode;
+  submitText?: string;
   onSubmit: (e: React.FormEvent) => void;
 }) {
   return (
@@ -12,7 +14,7 @@ export default function PostForm({
         type="submit"
         className="p-3 mt-2 bg-violet-700 hover:bg-violet-900 transition-colors w-full rounded-xl"
       >
-        post
+        {submitText}
       </button>
     </form>
   );
@@ -29,13 +31,13 @@ export function TextArea({ placeholder }: { placeholder: string }) {
   );
 }
 
-export function ImageOrVideo() {
+export function ImageOrVideo({ name }: { name: string }) {
   return (
     <input
       type="file"
-      name="file"
+      name={name}
       accept="image/*, video/*"
-      className="p-2 ring-1 ring-violet-950 file:bg-violet-700 file:text-sm file:py-1 file:px-2 file:text-white rounded-xl file:mr-2 file:border-0 file:rounded-md transition-colors w-full hover:bg-violet-950"
+      className="p-2 ring-1 ring-violet-950 file:bg-violet-700 file:text-sm file:py-1 file:text-white rounded-xl file:border-0 file:rounded-md transition-colors hover:bg-violet-800 hover:file:bg-zinc-900 w-full"
     />
   );
 }

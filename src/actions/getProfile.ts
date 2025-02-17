@@ -48,6 +48,20 @@ export async function getMyPosts(id: number) {
       contentFileType: problemPost.contentFileType,
       description: problemPost.description,
       createdAt: problemPost.createdAt,
+      isSaved:
+        sql<boolean>`EXISTS (SELECT 1 FROM saved_posts WHERE problem_post_id = ${problemPost.id} AND user_id = ${id})`.as(
+          "isSaved"
+        ),
+      isVoted: id
+        ? sql<boolean | null>`
+              (SELECT ${postVotes.voteType} 
+       FROM ${postVotes} 
+       WHERE ${postVotes.problemPostId} = ${problemPost.id} 
+       AND ${postVotes.userId} = ${id} 
+       LIMIT 1)
+
+            `.as("isVoted")
+        : sql<boolean | null>`NULL`.as("isVoted"),
       stats: {
         upvotes:
           sql<number>`COUNT(CASE WHEN ${postVotes.voteType} = TRUE THEN 1 END)`.as(
@@ -139,6 +153,20 @@ export async function getMyVotedPosts(id: number, voteType: boolean) {
       contentFileType: problemPost.contentFileType,
       description: problemPost.description,
       createdAt: problemPost.createdAt,
+      isSaved:
+        sql<boolean>`EXISTS (SELECT 1 FROM saved_posts WHERE problem_post_id = ${problemPost.id} AND user_id = ${id})`.as(
+          "isSaved"
+        ),
+      isVoted: id
+        ? sql<boolean | null>`
+              (SELECT ${postVotes.voteType} 
+       FROM ${postVotes} 
+       WHERE ${postVotes.problemPostId} = ${problemPost.id} 
+       AND ${postVotes.userId} = ${id} 
+       LIMIT 1)
+
+            `.as("isVoted")
+        : sql<boolean | null>`NULL`.as("isVoted"),
       stats: {
         upvotes:
           sql<number>`COUNT(CASE WHEN ${postVotes.voteType} = TRUE THEN 1 END)`.as(
@@ -206,6 +234,20 @@ export const getMySavedPosts = cache(async (id: number) => {
       contentFileType: problemPost.contentFileType,
       description: problemPost.description,
       createdAt: problemPost.createdAt,
+      isSaved:
+        sql<boolean>`EXISTS (SELECT 1 FROM saved_posts WHERE problem_post_id = ${problemPost.id} AND user_id = ${id})`.as(
+          "isSaved"
+        ),
+      isVoted: id
+        ? sql<boolean | null>`
+              (SELECT ${postVotes.voteType} 
+       FROM ${postVotes} 
+       WHERE ${postVotes.problemPostId} = ${problemPost.id} 
+       AND ${postVotes.userId} = ${id} 
+       LIMIT 1)
+
+            `.as("isVoted")
+        : sql<boolean | null>`NULL`.as("isVoted"),
       stats: {
         upvotes:
           sql<number>`COUNT(CASE WHEN ${postVotes.voteType} = TRUE THEN 1 END)`.as(

@@ -12,6 +12,8 @@ export type ImageProblemProps = {
     postedBy: string | null;
     title: string;
     imgSrc: string[] | null;
+    isSaved: boolean;
+    isVoted: boolean | null;
     contentFileType: string | null;
     vidSrc: string[] | null;
     description: string | null;
@@ -23,8 +25,8 @@ export type ImageProblemProps = {
     };
   };
 };
-
 export default function ImageProblemPost({ data }: ImageProblemProps) {
+  // console.log(data.isVoted);
   return (
     <PostWrapper id={data.id}>
       <div className="flex justify-between items-center">
@@ -34,14 +36,12 @@ export default function ImageProblemPost({ data }: ImageProblemProps) {
           <p className="text-zinc-500 text-xs font-medium">
             {formatDistanceToNow(data.createdAt)} ago
           </p>
-          {/* <button
-            type="button"
-            className="text-sm font-medium px-3 rounded-3xl bg-zinc-300 text-zinc-900 ring-1 ring-zinc-500 hover:bg-zinc-600"
-          >
-            follow
-          </button> */}
         </div>
-        <PostModal postId={data.id} userId={data.userId} />
+        <PostModal
+          isSaved={data.isSaved}
+          postId={data.id}
+          userId={data.userId}
+        />
       </div>
       <h1 className="font-medium">{data.title}</h1>
       {data.imgSrc && data.imgSrc.length > 0 && (
@@ -50,7 +50,7 @@ export default function ImageProblemPost({ data }: ImageProblemProps) {
             priority
             src={data.imgSrc[0]}
             width={500}
-            className="object-contain w max-h-96 mx-auto"
+            className="object-contain max-h-96 mx-auto"
             height={500}
             alt="image"
           />
@@ -64,6 +64,7 @@ export default function ImageProblemPost({ data }: ImageProblemProps) {
         upvotes={data.stats.upvotes}
         downvotes={data.stats.downvotes}
         comments={data.stats.comments}
+        isVoted={data.isVoted}
         onCommentsClikcHref={`/problem/${data.id}`}
       />
     </PostWrapper>

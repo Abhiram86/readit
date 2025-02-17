@@ -12,33 +12,56 @@ import Link from "next/link";
 import { FaExternalLinkSquareAlt } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
 import FollowCard from "./FollowCard";
+import { users } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import db from "@/db/drizzle";
+import { cache } from "react";
 
-export default function ProfileGroup({
+export default async function ProfileGroup({
+  username,
   id,
   query,
 }: {
+  username: string;
   id: number;
   query: string;
 }) {
+  const userIdFromUserName = cache(
+    async () =>
+      await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.username, username))
+        .limit(1)
+  );
+  const userId = await userIdFromUserName();
+  console.log(userIdFromUserName);
+  if (!userId || userId.length === 0)
+    return <div className="text-center">Error</div>;
   switch (query) {
     case "general":
-      return <DisplayUserCard id={id} />;
+      return <DisplayUserCard id={userId[0].id} />;
     case "posts":
-      return <DisplayMyPosts id={id} />;
+      return <DisplayMyPosts id={userId[0].id} />;
     case "following":
-      return <DisplayMyFollowing id={id} />;
+      if (userId[0].id !== id) return <div>Error</div>;
+      return <DisplayMyFollowing id={userId[0].id} />;
     case "followers":
-      return <DisplayMyFollowers id={id} />;
+      if (userId[0].id !== id) return <div>Error</div>;
+      return <DisplayMyFollowers id={userId[0].id} />;
     case "upvoted":
-      return <DisplayMyVotedPosts id={id} voteType={true} />;
+      if (userId[0].id !== id) return <div>Error</div>;
+      return <DisplayMyVotedPosts id={userId[0].id} voteType={true} />;
     case "downvoted":
-      return <DisplayMyVotedPosts id={id} voteType={false} />;
-    case "mycomments":
-      return <DisplayMyComments id={id} />;
+      if (userId[0].id !== id) return <div>Error</div>;
+      return <DisplayMyVotedPosts id={userId[0].id} voteType={false} />;
+    case "comments":
+      return <DisplayMyComments id={userId[0].id} />;
     case "saved":
-      return <DisplayMySavedPosts id={id} />;
+      if (userId[0].id !== id) return <div>Error</div>;
+      return <DisplayMySavedPosts id={userId[0].id} />;
     default:
-      return <DisplayUserCard id={id} />;
+      return <DisplayUserCard id={userId[0].id} />;
   }
 }
 
@@ -100,11 +123,15 @@ export async function DisplayMyPosts({ id }: { id: number }) {
   if (!myPosts) return <div>Error</div>;
   if (myPosts.length === 0)
     return <div className="p-4 text-center">You have not posted any posts</div>;
-  return myPosts.map((post) => (
-    <div key={post.id} className="flex flex-col  max-w-[44rem]">
-      <ImageProblemPost data={post} />
+  return (
+    <div className="flex flex-col divide-y divide-zinc-700 max-w-[44rem]">
+      {myPosts.map((post) => (
+        <div key={post.id}>
+          <ImageProblemPost data={post} />
+        </div>
+      ))}
     </div>
-  ));
+  );
 }
 
 export async function DisplayMyFollowing({ id }: { id: number }) {
@@ -167,11 +194,15 @@ export async function DisplayMyVotedPosts({
         You have not {voteType ? "upvoted" : "downvoted"} any posts
       </div>
     );
-  return votedPosts.map((post) => (
-    <div key={post.id} className="flex flex-col  max-w-[44rem]">
-      <ImageProblemPost data={post} />
+  return (
+    <div className="flex flex-col divide-y divide-zinc-700 max-w-[44rem]">
+      {votedPosts.map((post) => (
+        <div key={post.id}>
+          <ImageProblemPost data={post} />
+        </div>
+      ))}
     </div>
-  ));
+  );
 }
 
 export async function DisplayMyComments({ id }: { id: number }) {

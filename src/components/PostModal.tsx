@@ -9,15 +9,27 @@ import { CiShare2 } from "react-icons/ci";
 import toast from "react-hot-toast";
 import { useUserStore } from "@/store/user";
 import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import getIsFollowing from "@/actions/getIsFollowing";
 
 export default function PostModal({
+  isSaved,
   postId,
   userId,
 }: {
+  isSaved: boolean;
   postId: number;
   userId: number;
 }) {
   const { user } = useUserStore();
+  const [isOpen, setIsOpen] = useState(false);
+  const { data } = useQuery({
+    queryKey: ["isFollowing", userId, user?.id],
+    queryFn: async () => await getIsFollowing(userId, user?.id || -1),
+    staleTime: 60 * 1000,
+    enabled: isOpen,
+  });
+  console.log(data);
   const handleSavePost = async () => {
     if (!user) {
       toast.error("You must be logged in to save post", {
@@ -84,7 +96,6 @@ export default function PostModal({
       });
     }
   };
-  const [isOpen, setIsOpen] = useState(false);
   return (
     <div className="relative">
       <IoEllipsisVertical
@@ -92,19 +103,27 @@ export default function PostModal({
         className="text-zinc-400 cursor-pointer transition-colors h-6 w-6 p-1 rounded-full hover:bg-zinc-700"
       />
       {isOpen && (
-        <ModalContainer className="right-0 p-1 w-48 gap-[2px]">
-          <button
-            onClick={() => (handleFollow(), setIsOpen(false))}
-            className="bg-violet-700 transition-all ring-1 ring-violet-500 hover:ring-zinc-600 hover:bg-zinc-800 w-full font-medium text-zinc-100 py-1 rounded"
-          >
-            follow
-          </button>
+        <ModalContainer className="right-0 space-y-[2px] p-1 w-48 gap-[2px]">
+          {data && (
+            <button
+              onClick={() => (handleFollow(), setIsOpen(false))}
+              className={`${
+                data?.isFollowing ? "bg-violet-700" : "bg-zinc-100"
+              }transition-all ring-1 ring-violet-500 hover:ring-zinc-600 hover:bg-zinc-800 w-full font-medium text-zinc-100 py-1 rounded`}
+            >
+              follow
+            </button>
+          )}
           <ModalItem
             onClick={() => (handleSavePost(), setIsOpen(false))}
             className="p-1"
           >
-            <IoMdBookmark className="h-6 w-6 text-zinc-500" />
-            <p>save</p>
+            <IoMdBookmark
+              className={`h-6 w-6 ${
+                isSaved ? "text-zinc-300" : "text-zinc-500"
+              }`}
+            />
+            <p>{isSaved ? "saved" : "save"}</p>
           </ModalItem>
           <ModalItem
             className="p-1"

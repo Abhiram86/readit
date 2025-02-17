@@ -19,8 +19,8 @@ export default function PostWrapper({
   }, [id, pathname]);
   return (
     <div
-      className={`font-san p-2 ring-zinc-700 transition-all duration-300 rounded-lg ${
-        onPage ? "" : "hover:ring-1 hover:bg-zinc-800"
+      className={`font-sans p-2 ring-zinc-800 transition-all duration-300 rounded-lg ${
+        onPage ? "" : "hover:ring-1 hover:bg-zinc-900"
       }`}
       onClick={() => !onPage && router.push(`/problem/${id}`)}
     >

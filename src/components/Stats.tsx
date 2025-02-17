@@ -16,11 +16,13 @@ export default function Stats({
   postId,
   upvotes,
   downvotes,
+  isVoted,
   comments,
   onCommentsClikcHref,
 }: {
   postId: number;
   upvotes: number;
+  isVoted: boolean | null;
   downvotes: number;
   comments: number;
   onCommentsClikcHref: string;
@@ -28,6 +30,7 @@ export default function Stats({
   const [votes, setVotes] = useState({
     upvotes: Number(upvotes),
     downvotes: Number(downvotes),
+    isVoted: isVoted,
   });
   const { user } = useUserStore();
   const router = useRouter();
@@ -49,27 +52,50 @@ export default function Stats({
     });
     if (res.status === 200 && res.data.message === "vote added") {
       if (type === "upvote") {
-        setVotes((prev) => ({ ...prev, upvotes: prev.upvotes + 1 }));
+        setVotes((prev) => ({
+          ...prev,
+          upvotes: prev.upvotes + 1,
+          isVoted: true,
+        }));
       } else {
-        setVotes((prev) => ({ ...prev, downvotes: prev.downvotes + 1 }));
+        setVotes((prev) => ({
+          ...prev,
+          downvotes: prev.downvotes + 1,
+          isVoted: false,
+        }));
       }
     } else if (res.status === 200 && res.data.message === "vote removed") {
       if (type === "upvote") {
-        setVotes((prev) => ({ ...prev, upvotes: prev.upvotes - 1 }));
+        setVotes((prev) => ({
+          ...prev,
+          upvotes: prev.upvotes - 1,
+          isVoted: false,
+        }));
       } else {
-        setVotes((prev) => ({ ...prev, downvotes: prev.downvotes - 1 }));
+        setVotes((prev) => ({
+          ...prev,
+          downvotes: prev.downvotes - 1,
+          isVoted: true,
+        }));
       }
     }
   };
+  // console.log(votes);
   return (
     <div className="flex w-full pt-2 gap-2">
       <div
         onClick={(e) => e.stopPropagation()}
-        className="flex py-2 pl-3 pr-4 ring-1 ring-zinc-700 divide-x divide-zinc-600 rounded-3xl bg-zinc-800"
+        className={`flex py-2 pl-3 pr-4 ring-1 divide-x rounded-3xl ${
+          votes.isVoted === null
+            ? "bg-zinc-800 hover:bg-zinc-700 divide-zinc-600 ring-zinc-700" // Not voted
+            : votes.isVoted === true
+            ? "bg-violet-700 divide-violet-400 ring-violet-500" // Upvoted
+            : "bg-red-500 divide-red-300 ring-red-400" // Downvoted
+        }`}
       >
         <div className="flex gap-1 items-center pr-2">
           <BiSolidUpvote
-            className="h-4 w-4 active:-translate-y-1 hover:text-violet-500 transition-all cursor-pointer text-zinc-400"
+            className="h-4 w-4 active:-translate-y-1 hover:text-violet-700 transition-all cursor-pointer text-zinc-400"
             onClick={() => handleUpdateVotes("upvote")}
           />
           <p>{votes.upvotes}</p>

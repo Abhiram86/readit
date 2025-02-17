@@ -23,7 +23,7 @@ export default function CreatePost() {
       <h1 className="pl-2 font-bold text-zinc-400">Create Problem Post</h1>
       <PostForm onSubmit={handleSubmit}>
         <Input name="title" placeholder="Title" />
-        <ImageOrVideo />
+        <ImageOrVideo name="file" />
         <Input name="tags" placeholder="Tags ex: #tag1, #tag2" />
         <TextArea placeholder="Description" />
       </PostForm>

@@ -7,8 +7,8 @@ import { eq } from "drizzle-orm";
 export async function getFollowing(id: number) {
   const following = await db
     .select({
-      followerId: followers.followerId,
-      username: users.username,
+      id: followers.followerId,
+      name: users.username,
     })
     .from(followers)
     .leftJoin(users, eq(followers.followerId, users.id))

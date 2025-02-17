@@ -152,7 +152,9 @@ export const community = pgTable("community", {
     .references(() => users.id),
   title: varchar("title", { length: 256 }).notNull(),
   description: text("description"),
-  imgSrcs: varchar("img_srcs", { length: 256 }).array(),
+  // imgSrcs: varchar("img_srcs", { length: 256 }).array(),
+  avatar: varchar("avatar", { length: 256 }),
+  banner: varchar("banner", { length: 256 }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -176,6 +178,20 @@ export const communityMembers = pgTable(
   ]
 );
 
+export const communityPosts = pgTable("community_posts", {
+  id: serial("id").primaryKey(),
+  communityId: integer("community_id")
+    .notNull()
+    .references(() => community.id, { onDelete: "cascade" }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  problemPostId: integer("problem_post_id")
+    .notNull()
+    .references(() => problemPost.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const userRelations = relations(users, ({ many }) => ({
   problemPosts: many(problemPost),
   communities: many(community),
@@ -186,6 +202,7 @@ export const userRelations = relations(users, ({ many }) => ({
   savedPosts: many(savedPosts),
   postVotes: many(postVotes),
   commentVotes: many(commentVotes),
+  communityPosts: many(communityPosts),
   search: many(search),
 }));
 
@@ -197,6 +214,7 @@ export const problemPostRelations = relations(problemPost, ({ one, many }) => ({
   savedBy: many(savedPosts),
   comments: many(comments),
   votes: many(postVotes),
+  communityPosts: many(communityPosts),
 }));
 
 export const commentRelations = relations(comments, ({ one, many }) => ({
@@ -278,6 +296,7 @@ export const communityRelations = relations(community, ({ one, many }) => ({
     fields: [community.createdBy],
     references: [users.id],
   }),
+  communityPosts: many(communityPosts),
 }));
 
 export const communityMembersRelations = relations(
@@ -293,3 +312,18 @@ export const communityMembersRelations = relations(
     }),
   })
 );
+
+export const communityPostsRelations = relations(communityPosts, ({ one }) => ({
+  user: one(users, {
+    fields: [communityPosts.userId],
+    references: [users.id],
+  }),
+  problemPost: one(problemPost, {
+    fields: [communityPosts.problemPostId],
+    references: [problemPost.id],
+  }),
+  community: one(community, {
+    fields: [communityPosts.communityId],
+    references: [community.id],
+  }),
+}));
