@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 // import { BiChevronUp } from "react-icons/bi";
 import { getFollowing } from "@/actions/getFollowing";
 import { useEffect, useState } from "react";
-import { getCommunities } from "@/actions/getCommunities";
+import { getCommunities } from "@/actions/getJoinedCommunities";
 import Collapsible from "./Collapsible";
 
 export default function Sidebar() {

@@ -4,6 +4,7 @@ import PostForm, { ImageOrVideo, TextArea } from "@/components/PostForm";
 import { useUserStore } from "@/store/user";
 import axios from "axios";
 import { useParams } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function CreateCommunityPost() {
   const { user } = useUserStore();
@@ -17,9 +18,21 @@ export default function CreateCommunityPost() {
     if (!user) return;
     const formData = new FormData(e.currentTarget as HTMLFormElement);
     formData.append("userId", user.id.toString());
-    const res = await axios.post("/api/newpost", formData, {
+    formData.append("communityName", communityName);
+    const res = await axios.post("/api/newcommunitypost", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
+    if (res.status === 200) {
+      toast.success("Post created", {
+        duration: 3000,
+        position: "top-center",
+        style: {
+          background: "#333",
+          color: "#fff",
+          border: "1px solid #52525b",
+        },
+      });
+    }
     console.log(res);
   };
 

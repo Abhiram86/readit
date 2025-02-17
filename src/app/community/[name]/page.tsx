@@ -1,4 +1,5 @@
 import { getCommunityWithName } from "@/actions/getCommunityWithName";
+import CommunityPosts from "@/components/CommunityPosts";
 import Tabs from "@/components/Tabs";
 import Image from "next/image";
 import Link from "next/link";
@@ -6,10 +7,13 @@ import { BiPlus } from "react-icons/bi";
 
 export default async function Community({
   params,
+  searchParams,
 }: {
   params: Promise<{ name: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const name = decodeURIComponent((await params).name);
+  const searchParam = ((await searchParams) as { q: string }) || null;
   console.log(name);
   const data = await getCommunityWithName(name);
   console.log(data);
@@ -39,14 +43,14 @@ export default async function Community({
           <div className="flex gap-2">
             <Link
               href={`../../new/${name}`}
-              className="px-3 flex gap-1 items-center py-1 ring-1 ring-zinc-700 rounded-3xl hover:ring-zinc-600 transition-colors"
+              className="px-3 flex gap-1 items-center py-1 ring-1 ring-zinc-700 rounded-3xl hover:ring-zinc-500 transition-colors"
               type="button"
             >
               <BiPlus className="mt-1 w-5 h-5" />
               <p>create post</p>
             </Link>
             <button
-              className="px-3 py-1 hover:bg-zinc-900 text-zinc-900 hover:text-zinc-100 bg-zinc-200 ring-1 ring-zinc-500 rounded-3xl transition-colors"
+              className="px-3 hover:bg-zinc-900 text-zinc-900 hover:text-zinc-100 bg-zinc-200 ring-1 ring-zinc-500 rounded-3xl transition-colors"
               type="button"
             >
               <p className="font-medium">join</p>
@@ -61,10 +65,15 @@ export default async function Community({
         prefix="community"
         name={name}
         tabLinks={["posts", "members"]}
-        query="posts"
+        query={searchParam?.q || "posts"}
         personalTabLinks={[]}
         showPersonal={true}
       />
+      {searchParam?.q === "members" ? (
+        <div>members</div>
+      ) : (
+        <CommunityPosts name={name} />
+      )}
     </div>
   );
 }

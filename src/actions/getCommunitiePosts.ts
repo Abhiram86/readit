@@ -1,24 +1,21 @@
 "use server";
 
 import db from "@/db/drizzle";
-import { postVotes, problemPost, users } from "@/db/schema";
-import { and, eq, gt, like, sql } from "drizzle-orm";
+import {
+  community,
+  communityPosts,
+  postVotes,
+  problemPost,
+  users,
+} from "@/db/schema";
 import s3Client from "@/storage/bucket";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { eq, sql } from "drizzle-orm";
 import { cache } from "react";
 
-export const getPosts = cache(
-  async ({
-    pageParam,
-    searchParam,
-    userId,
-  }: {
-    pageParam?: number;
-    searchParam?: string;
-    userId: number | null;
-  }) => {
-    console.log("searchParam is:", searchParam);
+export const getCommunitiePosts = cache(
+  async (communityName: string, userId: number) => {
     const res = await db
       .select({
         id: problemPost.id,
@@ -36,13 +33,13 @@ export const getPosts = cache(
           ),
         isVoted: userId
           ? sql<boolean | null>`
-              (SELECT ${postVotes.voteType} 
-       FROM ${postVotes} 
-       WHERE ${postVotes.problemPostId} = ${problemPost.id} 
-       AND ${postVotes.userId} = ${userId} 
-       LIMIT 1)
-
-            `.as("isVoted")
+                      (SELECT ${postVotes.voteType} 
+               FROM ${postVotes} 
+               WHERE ${postVotes.problemPostId} = ${problemPost.id} 
+               AND ${postVotes.userId} = ${userId} 
+               LIMIT 1)
+        
+                    `.as("isVoted")
           : sql<boolean | null>`NULL`.as("isVoted"),
         stats: {
           upvotes:
@@ -57,24 +54,15 @@ export const getPosts = cache(
         },
       })
       .from(problemPost)
-      .where(
-        and(
-          searchParam && searchParam.length > 0
-            ? like(problemPost.title, `%${searchParam}%`)
-            : undefined,
-          pageParam ? gt(problemPost.id, pageParam) : undefined
-        )
+      .leftJoin(
+        communityPosts,
+        eq(problemPost.id, communityPosts.problemPostId)
       )
-      .leftJoin(postVotes, eq(problemPost.id, postVotes.problemPostId))
       .leftJoin(users, eq(problemPost.userId, users.id))
-      .groupBy(
-        problemPost.id,
-        problemPost.commentCount,
-        users.username,
-        postVotes.voteType
-      )
-      .orderBy(problemPost.id)
-      .limit(2);
+      .leftJoin(postVotes, eq(problemPost.id, postVotes.problemPostId))
+      .where(eq(community.title, communityName))
+      .leftJoin(community, eq(communityPosts.communityId, community.id))
+      .groupBy(community.id, problemPost.id, users.id);
 
     const postsWithFiles = await Promise.all(
       res.map(async (post) => {
@@ -107,8 +95,6 @@ export const getPosts = cache(
         };
       })
     );
-
-    // console.log(res);
 
     return postsWithFiles;
   }
