@@ -1,6 +1,9 @@
 import { getCommunityWithName } from "@/actions/getCommunityWithName";
 import CommunityPosts from "@/components/CommunityPosts";
 import Tabs from "@/components/Tabs";
+import ToggleButton from "@/components/ToggleButton";
+import { verifyToken } from "@/utils/authSession";
+import { cookies } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { BiPlus } from "react-icons/bi";
@@ -14,8 +17,10 @@ export default async function Community({
 }) {
   const name = decodeURIComponent((await params).name);
   const searchParam = ((await searchParams) as { q: string }) || null;
+  const token = (await cookies()).get("token")?.value;
+  const userData = token ? await verifyToken(token) : null;
   console.log(name);
-  const data = await getCommunityWithName(name);
+  const data = await getCommunityWithName(name, userData ? userData.id : null);
   console.log(data);
 
   return (
@@ -43,18 +48,33 @@ export default async function Community({
           <div className="flex gap-2">
             <Link
               href={`../../new/${name}`}
-              className="px-3 flex gap-1 items-center py-1 ring-1 ring-zinc-700 rounded-3xl hover:ring-zinc-500 transition-colors"
+              className="px-3 flex gap-1 items-center py-1 ring-1 ring-zinc-700 rounded-3xl hover:ring-zinc-500 transition-all"
               type="button"
             >
               <BiPlus className="mt-1 w-5 h-5" />
               <p>create post</p>
             </Link>
-            <button
-              className="px-3 hover:bg-zinc-900 text-zinc-900 hover:text-zinc-100 bg-zinc-200 ring-1 ring-zinc-500 rounded-3xl transition-colors"
+            <ToggleButton
+              communityId={data[0].id}
+              userId={userData ? userData.id : null}
+              data={{
+                toggler: data[0].isMember,
+                beforeToggle: "join",
+                afterToggle: "joined",
+              }}
+            />
+            {/* <button
+              className={`px-3 ${
+                data[0].isMember
+                  ? "bg-zinc-900 ring-zinc-700 hover:ring-zinc-500"
+                  : "hover:bg-zinc-900 ring-zinc-500 text-zinc-900 hover:text-zinc-100 bg-zinc-200"
+              } ring-1 rounded-3xl transition-all`}
               type="button"
             >
-              <p className="font-medium">join</p>
-            </button>
+              <p className="font-medium">
+                {data[0].isMember ? "joined" : "join"}
+              </p>
+            </button> */}
           </div>
         </div>
         <p className="line-clamp-2 text-sm text-zinc-400">

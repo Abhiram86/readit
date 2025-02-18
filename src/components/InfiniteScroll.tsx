@@ -46,7 +46,7 @@ export default function InfiniteScroll({
           page.map(
             (data) =>
               data.imgSrc && (
-                <div key={data.id}>
+                <div className="pt-[1px]" key={data.id}>
                   <ImageProblemPost data={data} />
                 </div>
               )

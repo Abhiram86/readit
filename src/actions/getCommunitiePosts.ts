@@ -33,13 +33,11 @@ export const getCommunitiePosts = cache(
           ),
         isVoted: userId
           ? sql<boolean | null>`
-                      (SELECT ${postVotes.voteType} 
+              (SELECT ${postVotes.voteType} 
                FROM ${postVotes} 
                WHERE ${postVotes.problemPostId} = ${problemPost.id} 
                AND ${postVotes.userId} = ${userId} 
-               LIMIT 1)
-        
-                    `.as("isVoted")
+               LIMIT 1)`.as("isVoted")
           : sql<boolean | null>`NULL`.as("isVoted"),
         stats: {
           upvotes:

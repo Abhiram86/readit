@@ -16,7 +16,7 @@ export default function Tabs({
   prefix: string;
 }) {
   return (
-    <div className="tabs mt-2 px-1 pt-1 pb-2 md:w-[calc(100vw-18.25rem)] w-[calc(100vw-2.25rem)] overflow-x-auto border-b mb-2 border-zinc-700">
+    <div className="tabs mt-2 px-1 pt-1 pb-2 md:w-[calc(100vw-18.25rem)] w-[calc(100vw-2.25rem)] overflow-x-auto border-b border-zinc-700">
       <ul className="flex gap-2">
         {tabLinks.map(
           (link, idx) =>

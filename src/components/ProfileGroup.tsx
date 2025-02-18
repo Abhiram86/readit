@@ -126,7 +126,7 @@ export async function DisplayMyPosts({ id }: { id: number }) {
   return (
     <div className="flex flex-col divide-y divide-zinc-700 max-w-[44rem]">
       {myPosts.map((post) => (
-        <div key={post.id}>
+        <div className="pt-[1px]" key={post.id}>
           <ImageProblemPost data={post} />
         </div>
       ))}
@@ -197,7 +197,7 @@ export async function DisplayMyVotedPosts({
   return (
     <div className="flex flex-col divide-y divide-zinc-700 max-w-[44rem]">
       {votedPosts.map((post) => (
-        <div key={post.id}>
+        <div className="pt-[1px]" key={post.id}>
           <ImageProblemPost data={post} />
         </div>
       ))}

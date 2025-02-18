@@ -31,7 +31,7 @@ export default async function Home({
     <div className="font-sans p-2 max-w-[44rem]">
       <div className="flex flex-col divide-y divide-zinc-700">
         {res.map((post) => (
-          <div key={post.id}>
+          <div className="pt-[1px]" key={post.id}>
             <ImageProblemPost data={post} />
           </div>
         ))}

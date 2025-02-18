@@ -12,8 +12,8 @@ export const getCommunities = cache(async (userid: number) => {
       name: community.title,
     })
     .from(community)
-    .where(eq(community.createdBy, userid))
     .leftJoin(communityMembers, eq(community.id, communityMembers.communityId))
+    .where(eq(communityMembers.userId, userid))
     .groupBy(community.id);
   return res;
 });

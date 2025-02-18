@@ -20,15 +20,16 @@ export default function Navbar({ userData }: { userData: UserData | null }) {
     }
   }, [userData, login]);
   return (
-    <header className="sticky top-0 z-50 border-b border-zinc-600 bg-black/70 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 border-b border-zinc-600 bg-black/70 backdrop-blur">
       <nav className="flex justify-between items-center space-x-2 p-2">
         <BiMenu
           className="h-8 md:w-0 md:h-0 md:p-0 transition-all duration-300 w-8 p-1 cursor-pointer hover:bg-zinc-700 rounded"
           onClick={toggle}
         />
-        <div className="flex gap-2 items-center">
-          <div className="w-9 h-9 bg-gradient-to-br from-violet-700 to-purple-900 rounded-full mr-1" />
-        </div>
+        <div
+          onClick={() => router.replace("/")}
+          className="w-9 h-9 bg-gradient-to-br from-violet-700 to-purple-900 rounded-full mr-1"
+        />
         <div className="peer relative flex-1">
           <input
             type="text"
@@ -41,7 +42,7 @@ export default function Navbar({ userData }: { userData: UserData | null }) {
             className="h-5 w-5 absolute top-3 cursor-pointer right-3"
             onClick={() =>
               searchQuery.length > 0
-                ? router.replace(`?q=${searchQuery}`)
+                ? router.replace(`/?q=${searchQuery}`)
                 : router.replace(`/`)
             }
           />

@@ -6,9 +6,9 @@ export default async function CommunityPosts({ name }: { name: string }) {
   console.log(communityPosts);
 
   return (
-    <div className="flex flex-col divide-y divide-zinc-700">
+    <div className="flex flex-col divide-y max-w-[44rem] divide-zinc-700">
       {communityPosts.map((post) => (
-        <div key={post.id}>
+        <div className="pt-[1px]" key={post.id}>
           <ImageProblemPost data={post} />
         </div>
       ))}

@@ -24,16 +24,13 @@ export default function Sidebar() {
   const pathname = usePathname();
   useEffect(() => {
     if (user) {
-      // getFollowing(user.id).then((res) => {
-      //   setFollowing(res);
-      //   console.log(res);
-      // });
       Promise.allSettled([getFollowing(user.id), getCommunities(user.id)]).then(
         (res) => {
           if (res[0].status === "fulfilled") {
             setFollowing(res[0].value);
           }
           if (res[1].status === "fulfilled") {
+            // console.log(res[1].value);
             setCommunities(res[1].value);
           }
         }

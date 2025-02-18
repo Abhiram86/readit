@@ -16,7 +16,7 @@ export default function Collapsible({ name, data, href }: CollapsibleProps) {
     <>
       <div
         onClick={() => setShowFollowing(!showFollowing)}
-        className="px-4 py-2 hover:ring-1 cursor-pointer ring-zinc-700 text-zinc-400 hover:bg-zinc-800 rounded-lg flex items-center justify-between"
+        className="px-4 py-2 hover:ring-1 cursor-pointer ring-zinc-700 text-zinc-400 hover:bg-zinc-800/75 rounded-lg flex items-center justify-between"
       >
         <p className="text-sm">{name}</p>
         <BiChevronUp
@@ -32,7 +32,7 @@ export default function Collapsible({ name, data, href }: CollapsibleProps) {
               href={`${href}/${d.name}`}
               onClick={toggle}
               key={d.id}
-              className="flex px-4 py-[9px] rounded-lg hover:ring-1 ring-zinc-700 hover:bg-zinc-800 items-center text-zinc-400 gap-2 font-medium"
+              className="flex px-4 py-[9px] rounded-lg hover:ring-1 ring-zinc-700 hover:bg-zinc-800/75 items-center text-zinc-400 gap-2 font-medium"
             >
               <div className="h-6 w-6 border rounded-full" />
               <p>{d.name}</p>

@@ -8,32 +8,42 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { eq, sql } from "drizzle-orm";
 import { cache } from "react";
 
-export const getCommunityWithName = cache(async (name: string) => {
-  const res = await db
-    .select({
-      id: community.id,
-      name: community.title,
-      banner: community.banner,
-      createdAt: community.createdAt,
-      description: community.description,
-      membersCount: sql<number>`COUNT(DISTINCT${communityMembers.userId})`.as(
-        "membersCount"
-      ),
-    })
-    .from(community)
-    .leftJoin(communityMembers, eq(community.id, communityMembers.communityId))
-    .where(eq(community.title, name))
-    .groupBy(community.id);
-  if (res.length !== 0 && res[0].banner !== null) {
-    const url = await generateSignedUrl(
-      res[0].banner.split("/")[0],
-      `${res[0].banner.split("/").slice(1).join("/")}`
-    );
-    res[0].banner = url;
-    // console.log(url);
+export const getCommunityWithName = cache(
+  async (name: string, userId: number | null) => {
+    const res = await db
+      .select({
+        id: community.id,
+        name: community.title,
+        banner: community.banner,
+        createdAt: community.createdAt,
+        description: community.description,
+        membersCount: sql<number>`COUNT(DISTINCT${communityMembers.userId})`.as(
+          "membersCount"
+        ),
+        isMember: userId
+          ? sql<boolean>`EXISTS(SELECT 1 FROM ${communityMembers} WHERE ${communityMembers.communityId} = ${community.id} AND ${communityMembers.userId} = ${userId})`.as(
+              "isMember"
+            )
+          : sql<boolean>`FALSE`.as("isMember"),
+      })
+      .from(community)
+      .leftJoin(
+        communityMembers,
+        eq(community.id, communityMembers.communityId)
+      )
+      .where(eq(community.title, name))
+      .groupBy(community.id);
+    if (res.length !== 0 && res[0].banner !== null) {
+      const url = await generateSignedUrl(
+        res[0].banner.split("/")[0],
+        `${res[0].banner.split("/").slice(1).join("/")}`
+      );
+      res[0].banner = url;
+      // console.log(url);
+    }
+    return res;
   }
-  return res;
-});
+);
 
 const generateSignedUrl = async (bucket: string, key: string) => {
   const command = new GetObjectCommand({
