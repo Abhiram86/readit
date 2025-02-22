@@ -47,7 +47,6 @@ export default function ImageProblemPost({ data }: ImageProblemProps) {
       {data.imgSrc && data.imgSrc.length > 0 && (
         <ImageWrapper imgSrc={data.imgSrc[0]}>
           <Image
-            priority
             src={data.imgSrc[0]}
             width={500}
             className="object-contain max-h-96 mx-auto"

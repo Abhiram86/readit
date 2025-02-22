@@ -1,13 +1,13 @@
 "use client";
 
 export default function FollowCard({
-  followerId,
-  userId,
+  // followerId,
+  // userId,
   type,
   name,
 }: {
-  followerId: number;
-  userId: number;
+  // followerId: number;
+  // userId: number;
   type: "follower" | "following";
   name: string | null;
 }) {

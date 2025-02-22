@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import ImagePopOpen from "./ImagePopOpen";
+// import ImagePopOpen from "./ImagePopOpen";
 
 export default function ImageWrapper({
   children,
-  imgSrc,
-}: {
+}: // imgSrc,
+{
   children: React.ReactNode;
   imgSrc: string;
 }) {

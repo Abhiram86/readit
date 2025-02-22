@@ -85,24 +85,22 @@ export default function Stats({
     <div className="flex w-full pt-2 gap-2">
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`flex py-2 pl-3 pr-4 ring-1 divide-x rounded-3xl ${
-          votes.isVoted === null
-            ? "bg-zinc-800 hover:bg-zinc-700 divide-zinc-600 ring-zinc-700" // Not voted
-            : votes.isVoted === true
-            ? "bg-violet-700 divide-violet-400 ring-violet-500" // Upvoted
-            : "bg-red-500 divide-red-300 ring-red-400" // Downvoted
-        }`}
+        className={`flex py-1 pl-3 pr-4 ring-1 ring-zinc-700 bg-zinc-800 divide-x rounded-3xl`}
       >
         <div className="flex gap-1 items-center pr-2">
           <BiSolidUpvote
-            className="h-4 w-4 active:-translate-y-1 hover:text-violet-700 transition-all cursor-pointer text-zinc-400"
+            className={`h-4 w-4 active:-translate-y-1 hover:text-violet-700 transition-all cursor-pointer text-zinc-400 ${
+              votes.isVoted === true ? "text-violet-700" : ""
+            }`}
             onClick={() => handleUpdateVotes("upvote")}
           />
           <p>{votes.upvotes}</p>
         </div>
         <div className="flex gap-1 items-center pl-1">
           <BiSolidDownvote
-            className="h-4 w-4 active:translate-y-1 transition-all hover:text-red-500 cursor-pointer text-zinc-400"
+            className={`h-4 w-4 active:translate-y-1 transition-all hover:text-red-500 cursor-pointer text-zinc-400 ${
+              votes.isVoted === false ? "text-red-500" : ""
+            }`}
             onClick={() => handleUpdateVotes("downvote")}
           />
           <p>{votes.downvotes}</p>
@@ -111,7 +109,7 @@ export default function Stats({
       <div className="flex flex-wrap w-full justify-between gap-2">
         <div
           onClick={() => router.push(onCommentsClikcHref)}
-          className="flex items-center transition-colors ring-1 ring-zinc-700 gap-1 cursor-pointer hover:bg-zinc-700 py-2 pl-3 pr-4 rounded-3xl bg-zinc-800"
+          className="flex items-center transition-colors ring-1 ring-zinc-700 gap-1 cursor-pointer hover:bg-zinc-700 py-1 pl-3 pr-4 rounded-3xl bg-zinc-800"
         >
           <IoChatbubble className="h-4 w-4 text-zinc-400" />
           <p>{comments}</p>
@@ -124,9 +122,9 @@ export default function Stats({
             ),
             toast.success("Link copied to clipboard")
           )}
-          className="flex ring-1 ring-zinc-700 transition-colors items-center gap-1 cursor-pointer hover:bg-zinc-700 py-2 px-3 rounded-3xl bg-zinc-800"
+          className="flex ring-1 ring-zinc-700 transition-colors items-center gap-1 cursor-pointer hover:bg-zinc-700 py-1 px-3 rounded-3xl bg-zinc-800"
         >
-          <FaShare className="h-5 w-5 text-zinc-400" />
+          <FaShare className="h-4 w-4 text-zinc-400" />
         </div>
       </div>
     </div>

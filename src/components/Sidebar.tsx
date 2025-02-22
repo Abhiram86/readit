@@ -7,11 +7,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 // import { BiChevronUp } from "react-icons/bi";
 import { getFollowing } from "@/actions/getFollowing";
-import { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { getCommunities } from "@/actions/getJoinedCommunities";
 import Collapsible from "./Collapsible";
 
-export default function Sidebar() {
+function Sidebar() {
   const { isOpen, toggle } = useSidebarStore();
   const { user } = useUserStore();
   const [following, setFollowing] = useState<
@@ -37,6 +37,10 @@ export default function Sidebar() {
       );
     }
   }, [user]);
+
+  const memoisedFollowing = useMemo(() => following, [following]);
+  const memoisedCommunities = useMemo(() => communities, [communities]);
+
   return (
     <aside
       className={`${
@@ -66,13 +70,17 @@ export default function Sidebar() {
         <>
           <hr className="border-zinc-600" />
           <ul className="w-full space-y-1">
-            <Collapsible name="Following" data={following} href={`/profile`} />
+            <Collapsible
+              name="Following"
+              data={memoisedFollowing}
+              href={`/profile`}
+            />
           </ul>
           <hr className="border-zinc-600" />
           <ul className="w-full space-y-1">
             <Collapsible
               name="Communities"
-              data={communities}
+              data={memoisedCommunities}
               href="/community"
             />
           </ul>
@@ -81,3 +89,5 @@ export default function Sidebar() {
     </aside>
   );
 }
+
+export default React.memo(Sidebar);

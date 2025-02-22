@@ -146,8 +146,8 @@ export async function DisplayMyFollowing({ id }: { id: number }) {
     >
       <FollowCard
         type="following"
-        followerId={follow.followerId}
-        userId={id}
+        // followerId={follow.followerId}
+        // userId={id}
         name={follow.username}
       />
       {/* <FollowCard
@@ -171,8 +171,8 @@ export async function DisplayMyFollowers({ id }: { id: number }) {
     >
       <FollowCard
         type="follower"
-        followerId={follower.followerId}
-        userId={id}
+        // followerId={follower.followerId}
+        // userId={id}
         name={follower.username}
       />
     </div>
@@ -221,10 +221,7 @@ export async function DisplayMyComments({ id }: { id: number }) {
         <p className="text-sm">visit post</p>
         <FaExternalLinkSquareAlt className="h-3 w-3 mt-[2.5px]" />
       </Link>
-      <Comment
-        data={{ ...comment, level: 0 }}
-        problemPostId={comment.problemPostId}
-      />
+      <Comment data={comment} problemPostId={comment.problemPostId} />
     </div>
   ));
 }

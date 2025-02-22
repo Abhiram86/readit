@@ -50,8 +50,8 @@ export default function CommentStats({
   };
   return (
     <div>
-      <div className="flex pt-2 w-32 gap-2 justify-between">
-        <div className="flex ring-1 ring-zinc-700 py-2 pl-3 pr-4 divide-x divide-zinc-600 rounded-3xl bg-zinc-800">
+      <div className="flex pt-2 w-fit gap-2 justify-between">
+        <div className="flex ring-1 ring-zinc-700 py-1 pl-3 pr-4 divide-x divide-zinc-600 rounded-3xl bg-zinc-800">
           <div className="flex gap-1 items-center pr-2">
             <BiSolidUpvote
               className="h-4 w-4 active:-translate-y-1 hover:text-violet-500 transition-all cursor-pointer text-zinc-400"
@@ -69,7 +69,7 @@ export default function CommentStats({
         </div>
         <div
           onClick={() => setCommentBox(!commentBox)}
-          className="flex items-center ring-1 ring-zinc-700 gap-1 cursor-pointer hover:bg-zinc-700 py-2 pl-3 pr-4 rounded-3xl bg-zinc-800"
+          className="flex items-center ring-1 ring-zinc-700 gap-1 cursor-pointer hover:bg-zinc-700 py-1 pl-3 pr-4 rounded-3xl bg-zinc-800"
         >
           <IoChatbubble className="h-4 w-4 text-zinc-400" />
           <p>{comments}</p>

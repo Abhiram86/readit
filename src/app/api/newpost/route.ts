@@ -2,8 +2,15 @@ import db from "@/db/drizzle";
 import { problemPost } from "@/db/schema";
 import s3Client from "@/storage/bucket";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { z } from "zod";
 // import ffmpeg from "fluent-ffmpeg";
 // import stream from "stream";
+
+const postSchema = z.object({
+  title: z.string().optional(),
+  description: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+});
 
 export async function POST(req: Request) {
   const formData = await req.formData();
@@ -15,9 +22,11 @@ export async function POST(req: Request) {
 
   const tags = tagString.split("#").filter((tag) => tag.length > 0);
 
-  if (title.length < 4) {
+  const result = postSchema.safeParse({ title, description, tags });
+
+  if (!result.success) {
     return Response.json(
-      { error: "Title must be at least 4 characters" },
+      { message: "error", err: result.error },
       { status: 400 }
     );
   }
