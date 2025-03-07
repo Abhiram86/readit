@@ -9,7 +9,7 @@ import { CiShare2 } from "react-icons/ci";
 import toast from "react-hot-toast";
 import { useUserStore } from "@/store/user";
 import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import getIsFollowing from "@/actions/getIsFollowing";
 
 function PostModal({
@@ -23,11 +23,90 @@ function PostModal({
 }) {
   const { user } = useUserStore();
   const [isOpen, setIsOpen] = useState(false);
+
   const { data, isLoading } = useQuery({
     queryKey: ["isFollowing", userId, user?.id],
     queryFn: async () => await getIsFollowing(userId, user?.id || -1),
     staleTime: 60 * 1000,
     enabled: isOpen && userId !== user?.id,
+  });
+
+  const queryClient = useQueryClient();
+
+  const handleFollow = async () => {
+    console.log(userId, user?.id);
+    if (!user) {
+      toast.error("You must be logged in to follow", {
+        style: {
+          background: "#333",
+          color: "#fff",
+          border: "1px solid #52525b",
+        },
+      });
+      return;
+    }
+    try {
+      const res = await axios.post("/api/follow", {
+        userId: user.id,
+        followerId: userId,
+      });
+      if (res.status === 200) {
+        toast.success(res.data.message, {
+          style: {
+            background: "#333",
+            color: "#fff",
+            border: "1px solid #52525b",
+          },
+        });
+      } else {
+        toast.error("Something went wrong", {
+          style: {
+            background: "#333",
+            color: "#fff",
+            border: "1px solid #52525b",
+          },
+        });
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message, {
+          style: {
+            background: "#333",
+            color: "#fff",
+            border: "1px solid #52525b",
+          },
+        });
+      }
+    }
+  };
+
+  const mutation = useMutation({
+    mutationFn: handleFollow,
+    onMutate: async () => {
+      await queryClient.cancelQueries({
+        queryKey: ["isFollowing", userId, user?.id],
+      });
+      const prev = queryClient.getQueryData(["isFollowing", userId, user?.id]);
+      queryClient.setQueryData(
+        ["isFollowing", userId, user?.id],
+        (old: { isFollowing: boolean }) => ({
+          ...old,
+          isFollowing: !old.isFollowing,
+        })
+      );
+      return { prev };
+    },
+    onError: (err, variables, context) => {
+      queryClient.setQueryData(
+        ["isFollowing", userId, user?.id],
+        context?.prev
+      );
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["isFollowing", userId, user?.id],
+      });
+    },
   });
   // console.log(data);
   const handleSavePost = async () => {
@@ -63,39 +142,7 @@ function PostModal({
       });
     }
   };
-  const handleFollow = async () => {
-    if (!user) {
-      toast.error("You must be logged in to follow", {
-        style: {
-          background: "#333",
-          color: "#fff",
-          border: "1px solid #52525b",
-        },
-      });
-      return;
-    }
-    const res = await axios.post("/api/follow", {
-      userId: user.id,
-      followerId: userId,
-    });
-    if (res.status === 200) {
-      toast.success("following", {
-        style: {
-          background: "#333",
-          color: "#fff",
-          border: "1px solid #52525b",
-        },
-      });
-    } else {
-      toast.error("Something went wrong", {
-        style: {
-          background: "#333",
-          color: "#fff",
-          border: "1px solid #52525b",
-        },
-      });
-    }
-  };
+
   const handleDeletePost = async () => {
     if (!user) {
       toast.error("You must be logged in to delete post", {
@@ -140,10 +187,13 @@ function PostModal({
       {isOpen && (
         <ModalContainer className="right-8 top-0 space-y-[2px] p-1 w-48 gap-[2px]">
           {userId !== user?.id && (
-            <div>
+            <div className="border-b pb-1 border-zinc-600">
               {!isLoading ? (
                 <button
-                  onClick={() => (handleFollow(), setIsOpen(false))}
+                  onClick={() => {
+                    mutation.mutate();
+                    setIsOpen(false);
+                  }}
                   className={`${
                     !data?.isFollowing &&
                     // ? "bg-zinc-700"

@@ -4,6 +4,7 @@ import AuthForm, { Input } from "@/components/Form";
 import Link from "next/link";
 import axios from "axios";
 import { useFormReducer } from "@/hooks/formReducer";
+import { useRouter } from "next/navigation";
 
 export default function Signup() {
   const { formState, handleChange } = useFormReducer({
@@ -11,11 +12,12 @@ export default function Signup() {
     email: "",
     password: "",
   });
-
+  const router = useRouter();
   const handleSignup = async () => {
     try {
       const res = await axios.post("/api/signup", formState);
       if (res.status === 200) {
+        router.push("/signin");
         console.log("success");
       }
     } catch (err) {
